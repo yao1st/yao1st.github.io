@@ -10,7 +10,7 @@ tags: -sublime
 之前因为ros的缘故，装的是kubuntu 14.04，但是UI丑到无法忍受啊。想要安装个teamviewer结果依赖项还不给更新到更新的版本。一怒之下，安装了kubuntu 16.04.
 
 新的系统当然要用新的文本编辑器咯。
-![](/images/dese.jpg)
+![](/images/dese.jpeg)
 
 结果呢，不管是采用官方网站给出的步骤还是采用第三方ppa安装方法，就是无法安装成功。官方步骤直接卡在gpg key阶段，ppa则是死活下载不下来……
 ![](/images/xianzhuo.jpg)
@@ -29,7 +29,7 @@ tags: -sublime
 
 ### 下载tarball ###
 去sublime-text的[官网](https://www.sublimetext.com/3)下载
-![](/images/snip/sublime)
+![](/images/snip/sublime.png)
 
 解压缩
 ```shell
