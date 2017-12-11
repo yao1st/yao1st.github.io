@@ -1,5 +1,5 @@
 ---
-title: sublime_install
+title: (k)ubuntu 16.04 安装sublime-text-3143
 date: 2017-12-10 20:43:40
 tags: -sublime
 ---
@@ -29,7 +29,7 @@ tags: -sublime
 
 ### 下载tarball ###
 去sublime-text的[官网](https://www.sublimetext.com/3)下载
-![](/images/snip/sublime.png)
+![](/images/sublime.png)
 
 解压缩
 ```shell

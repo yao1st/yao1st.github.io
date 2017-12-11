@@ -80,3 +80,10 @@ deploy:
   type: git
   repo: https://github.com/yao1st/yao1st.github.io.git
   branch: master
+
+# Security
+##
+encrypt:
+    enable: true
+    default_abstract: 这是我写的日记哦，想看的话联系我ο(=•ω＜=)ρ⌒☆，也或者…………</br>
+    default_message: 猜猜密码是多少？ε = = (づ′▽`)づ
