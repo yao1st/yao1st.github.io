@@ -2,6 +2,7 @@
 title: (k)ubuntu 16.04 安装sublime-text-3143
 date: 2017-12-10 20:43:40
 tags: -sublime
+categories: linux
 ---
 只是装个sublime-text，简直要了亲命了！
 ![](/images/juewang.jpg)
