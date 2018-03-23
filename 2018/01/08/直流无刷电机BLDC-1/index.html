@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+  
+
+<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.2/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="-stm32 -BLDC," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="一些介绍直流有刷电机依靠电刷实现磁场换向，由于触点滑动，存在电刷磨损、火花、发热量大等缺点。而BLDC则是依靠电路实现电子换向，也就没有了电刷带来的一系列问题。对应的代价则是驱动变得比较复杂。BDC与BLDC的另一点显著区别则是BDC一般是线圈做转子，而BLDC一般是永磁体做转子。BLDC可以看作是PMSM（永磁同步电机）的一种。BLDC可分为外转子和内转两种。  另一类电机则是交流感应电机，与B">
+<meta name="keywords" content="-stm32 -BLDC">
+<meta property="og:type" content="article">
+<meta property="og:title" content="直流无刷电机BLDC-1">
+<meta property="og:url" content="http://yoursite.com/2018/01/08/直流无刷电机BLDC-1/index.html">
+<meta property="og:site_name" content="YAO&#39;s KINGDOM">
+<meta property="og:description" content="一些介绍直流有刷电机依靠电刷实现磁场换向，由于触点滑动，存在电刷磨损、火花、发热量大等缺点。而BLDC则是依靠电路实现电子换向，也就没有了电刷带来的一系列问题。对应的代价则是驱动变得比较复杂。BDC与BLDC的另一点显著区别则是BDC一般是线圈做转子，而BLDC一般是永磁体做转子。BLDC可以看作是PMSM（永磁同步电机）的一种。BLDC可分为外转子和内转两种。  另一类电机则是交流感应电机，与B">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/images/bdc_bldc.png">
+<meta property="og:image" content="http://yoursite.com/images/bldc_work2.gif">
+<meta property="og:image" content="http://yoursite.com/images/bldc_2phrase.gif">
+<meta property="og:image" content="http://yoursite.com/images/bldc_6phrase.png">
+<meta property="og:image" content="http://yoursite.com/images/bldc_connect.gif">
+<meta property="og:image" content="http://yoursite.com/images/bldc_pulse.png">
+<meta property="og:image" content="http://yoursite.com/images/bldc_foc.png">
+<meta property="og:image" content="http://yoursite.com/images/bldc_focfoc.png">
+<meta property="og:image" content="http://yoursite.com/images/bldc_hall.png">
+<meta property="og:updated_time" content="2018-03-22T03:38:15.894Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="直流无刷电机BLDC-1">
+<meta name="twitter:description" content="一些介绍直流有刷电机依靠电刷实现磁场换向，由于触点滑动，存在电刷磨损、火花、发热量大等缺点。而BLDC则是依靠电路实现电子换向，也就没有了电刷带来的一系列问题。对应的代价则是驱动变得比较复杂。BDC与BLDC的另一点显著区别则是BDC一般是线圈做转子，而BLDC一般是永磁体做转子。BLDC可以看作是PMSM（永磁同步电机）的一种。BLDC可分为外转子和内转两种。  另一类电机则是交流感应电机，与B">
+<meta name="twitter:image" content="http://yoursite.com/images/bdc_bldc.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/01/08/直流无刷电机BLDC-1/"/>
+
+
+
+
+
+  <title>直流无刷电机BLDC-1 | YAO's KINGDOM</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">YAO's KINGDOM</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">胡思乱想</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-linux">
+          <a href="/categories/linux" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-linux"></i> <br />
+            
+            Linux
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-life">
+          <a href="/categories/diary" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-lock"></i> <br />
+            
+            Life
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-python">
+          <a href="/categories/python" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-laptop"></i> <br />
+            
+            Python
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-embedded">
+          <a href="/categories/embedded" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-cogs"></i> <br />
+            
+            Embedded
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-magic">
+          <a href="/categories/trick" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-magic"></i> <br />
+            
+            Magic
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/08/直流无刷电机BLDC-1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Yao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YAO's KINGDOM">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">直流无刷电机BLDC-1</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-08T09:36:35+08:00">
+                2018-01-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/embedded/" itemprop="url" rel="index">
+                    <span itemprop="name">embedded</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="一些介绍"><a href="#一些介绍" class="headerlink" title="一些介绍"></a>一些介绍</h2><p>直流有刷电机依靠电刷实现磁场换向，由于触点滑动，存在电刷磨损、火花、发热量大等缺点。而BLDC则是依靠电路实现电子换向，也就没有了电刷带来的一系列问题。对应的代价则是驱动变得比较复杂。BDC与BLDC的另一点显著区别则是BDC一般是线圈做转子，而BLDC一般是永磁体做转子。BLDC可以看作是PMSM（永磁同步电机）的一种。BLDC可分为外转子和内转两种。</p>
+<p><img src="/images/bdc_bldc.png" width="45%"></p>
+<p>另一类电机则是交流感应电机，与BLDC不同，交流感应电机的转子不是永磁体，二是闭合线圈，依靠定子线圈产生的变化磁场激发的反电动势进而产生自己的磁场。有种“大哥带小弟一起飞”的感觉，所以并不是同步的，这类电机是异步电机。交流感应异步电机在大功率高转速场合比较适合，在低速和精准调速方面不如BLDC。</p>
+<p>BLDC在换向时需要知道转子的位置，因此需要测量或估计转子位置的方法。一般采用霍尔、编码器等传感器，或者依靠反电动势BEMF等无感方法来进行转子位置的估计。无感启动和对齐比较复杂。</p>
+<h2 id="BLDC的工作原理"><a href="#BLDC的工作原理" class="headerlink" title="BLDC的工作原理"></a>BLDC的工作原理</h2><p>BLDC的工作原理很简单，通过定子磁场不断变化，“吸引”转子永磁体和定子磁场一致“同步”</p>
+<!-- <img src="/images/bldc_work.gif"> -->
+<p><img src="/images/bldc_work2.gif"><br><!-- <iframe src="../images/bldc-work.gif"> --></p>
+<p>上面这个gif图片直观展现了单相驱动的原理，但是，BLDC多采用三相接入，如果每次只有一相通电充磁，利用率和输出转矩都太低。因此，可以采用两相通电，一相闲置的方法，一个“吸引”一个“排斥”使得永磁转子旋转。如下面这个gif所示。</p>
+<p><img src="/images/bldc_2phrase.gif"></p>
+<p>按照这种驱动方式，A B C三相在6拍之后可以使得定子磁场旋转一周。这类驱动方法称为梯形波驱动。</p>
+<p><img src="/images/bldc_6phrase.png" width="45%"></p>
+<p>当然，在实际应用时并不需要同时对两相进行开关控制，可以将ABC三相的自由端相连，构成<strong>星连接</strong>即可。(有的也会采用三角连接)</p>
+<p><img src="/images/bldc_connect.gif"></p>
+<h2 id="正弦波驱动"><a href="#正弦波驱动" class="headerlink" title="正弦波驱动"></a>正弦波驱动</h2><p>梯形波驱动其实就是一个控制电子换向器换向的过程，采用梯形波驱动可以获得很大的RPM。但是梯形波驱动会造成换向时相电流和输出转矩产生脉动。</p>
+<p><img src="/images/bldc_pulse.png" width="45%"></p>
+<p>这一现象主要是由于相电流（相电压）不连续导致的。为了获得平稳的输出，可以采用正弦波驱动的方式。对于星形接线来说，其实是要让A-B A-C B-C两相之间的电流以正弦变化，为此，单相需要输入马鞍形波形。</p>
+<p>对于数字控制器来说，可以采用PWM调制的方式来实现指定波形的输出，其方法是将波形按时间轴平分，然后用等高的离散矩形波来代替，该矩形的面积要和正弦波对应部分的面积相等，然后将该矩形波输入一阶惯性环节，即可得到近似的指定波形。</p>
+<p><img src="/images/bldc_foc.png" width="45%"></p>
+<p>受限于PWM调制的频率，采用正弦波驱动的BLDC转速相较梯形波较小。</p>
+<h2 id="FOC"><a href="#FOC" class="headerlink" title="FOC"></a>FOC</h2><p>正弦波驱动是三相同时驱动（同时存在电流），而梯形波驱动在6拍中只有两相通电，第三相闲置，闲置的这一相可以用来测量反电动势，用于转子位置估计等。</p>
+<p>对于无感驱动的BLDC来说，为了获得转子位置估计，即使采用正弦波，可能也需要在反电动势过零处进行一下测量，这时候其实是在正弦波中加了一个干扰，好的控制器会对这一点进行特殊处理。</p>
+<p>其实，正弦驱动的方法已经涉及到了一般的PMSM的驱动方法。PMSM一般使用FOC算法进行驱动，STM32有专门的SDK。从STM32官方的介绍来看，常用的STM32芯片在运行FOC算法时CPU占用达到60%以上，可见正弦波驱动方式计算量还是比较大的。</p>
+<p><img src="/images/bldc_focfoc.png" width="45%"></p>
+<h2 id="BLDC中的霍尔"><a href="#BLDC中的霍尔" class="headerlink" title="BLDC中的霍尔"></a>BLDC中的霍尔</h2><p>BLDC在控制时需要时刻知道转子的位置，一般采用比较经济的霍尔作为传感器。霍尔的原理这里不多讲。在BLDC中，霍尔一般按照60度或120度均布，对于安装的精度有很高的要求。</p>
+<p>BLDC中霍尔一般是单极性数字霍尔，在转子的S极靠近时霍尔导通输出低电平，S远离时输出高电平。三相电机一般也采用三个霍尔，不同的安装角度输出的高低组合有所差异，根据霍尔高低组合可以大致确定转子所在的位置范围，但若要获得更精确的位置估计则需进一步处理。</p>
+<p><img src="/images/bldc_hall.png" width="45%"></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/stm32-BLDC/" rel="tag"># -stm32 -BLDC</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/01/08/diary20180108/" rel="next" title="日记20180108">
+                <i class="fa fa-chevron-left"></i> 日记20180108
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/01/08/推荐两个制作gif的在线工具/" rel="prev" title="推荐两个制作gif的在线工具">
+                推荐两个制作gif的在线工具 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Yao</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一些介绍"><span class="nav-number">1.</span> <span class="nav-text">一些介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BLDC的工作原理"><span class="nav-number">2.</span> <span class="nav-text">BLDC的工作原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#正弦波驱动"><span class="nav-number">3.</span> <span class="nav-text">正弦波驱动</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#FOC"><span class="nav-number">4.</span> <span class="nav-text">FOC</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BLDC中的霍尔"><span class="nav-number">5.</span> <span class="nav-text">BLDC中的霍尔</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yao</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2152113"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
