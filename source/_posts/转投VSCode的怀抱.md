@@ -4,7 +4,7 @@ date: 2017-12-19 09:34:35
 tags: 
     -sublime text
     -vscode
-    -python
+    -coding
 categories: linux
 password:
 visible:

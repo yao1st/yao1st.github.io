@@ -1,8 +1,8 @@
 ---
 title: matplotlib多图片无阻塞显示
 date: 2017-12-20 10:38:46
-tags: -python
-categories: python
+tags: -coding
+categories: coding
 password:
 visible:
 ---
